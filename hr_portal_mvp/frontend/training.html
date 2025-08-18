@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Treinamentos</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script defer src="./utils.js"></script>
+</head>
+<body onload="init()">
+<header><h1>Portal do Colaborador</h1>
+  <nav>
+    <a href="./dashboard.html">Dashboard</a>
+    <a href="./timeclock.html">Ponto</a>
+    <a href="./chat.html">Chat</a>
+    <a href="./training.html">Treinamentos</a>
+    <a href="./reports.html">Relatórios</a>
+  </nav>
+</header>
+<div class="container">
+  <h2>Cursos</h2>
+  <div id="courses" class="list"></div>
+  <div id="quiz" style="margin-top:20px"></div>
+  <div id="result" style="margin-top:10px"></div>
+</div>
+<script>
+let currentQuiz = null;
+async function init(){
+  requireAuth();
+  const courses = await api("/courses");
+  const list = document.getElementById("courses");
+  list.innerHTML = courses.map(c=>`<div class="item"><b>${c.title}</b><p>${c.description}</p><button class="btn" onclick="startQuiz(${c.id})">Fazer quiz</button></div>`).join("");
+}
+async function startQuiz(courseId){
+  const qs = await api("/quizzes/"+courseId);
+  currentQuiz = { courseId, qs };
+  const box = document.getElementById("quiz");
+  box.innerHTML = "<h3>Quiz</h3>" + qs.map((q,i)=>`
+    <div class="item">
+      <b>${i+1}. ${q.question}</b>
+      ${q.options.map((op,idx)=>`
+        <label style="display:block;margin-left:10px">
+          <input type="radio" name="q${i}" value="${idx}"> ${op}
+        </label>`).join("")}
+    </div>`).join("")
+    + `<button class="btn" onclick="submitQuiz()">Enviar respostas</button>`;
+  document.getElementById("result").innerHTML = "";
+}
+async function submitQuiz(){
+  const answers = currentQuiz.qs.map((_,i)=>{
+    const chk = document.querySelector(`input[name=q${i}]:checked`);
+    return chk ? Number(chk.value) : -1;
+  });
+  const res = await api("/quizzes/"+currentQuiz.courseId+"/submit", {method:"POST", body: JSON.stringify({answers})});
+  const r = document.getElementById("result");
+  r.innerHTML = `<div class="item"><b>Nota:</b> ${res.score}% • ${res.passed ? "Aprovado ✅" : "Reprovado ❌"}
+    ${res.certificate_url ? `<div><a class="btn" href="${res.certificate_url}" target="_blank">Baixar Certificado</a></div>` : ""}
+  </div>`;
+}
+</script>
+</body></html>
