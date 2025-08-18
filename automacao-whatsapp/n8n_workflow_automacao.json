@@ -1,0 +1,178 @@
+{
+  "name": "Automação WhatsApp – Webhook → Supabase → Zap",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "whatsapp/notify",
+        "options": {
+          "responseData": "OK",
+          "responseCode": 200
+        }
+      },
+      "id": "Webhook_Entrada",
+      "name": "Webhook (entrada)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [ -320, -40 ],
+      "webhookId": "whatsapp-notify"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "table": "modelos",
+        "columns": "texto",
+        "filters": "codigo=eq.{{ $json.modelo || $env.DEFAULT_TEMPLATE || 'confirmacao_agendamento' }}"
+      },
+      "id": "Supabase_Modelo",
+      "name": "Supabase - Buscar Modelo",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [ -60, -40 ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "SUPABASE_CREDENTIAL_ID",
+          "name": "Supabase (REST)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "const variaveis = $json.variaveis || {};\nconst modeloRows = items[0].json || {};\nlet texto = '';\nif (Array.isArray(modeloRows.data) && modeloRows.data.length > 0) {\n  texto = modeloRows.data[0].texto || '';\n} else if (modeloRows.texto) {\n  texto = modeloRows.texto;\n}\n// substituição simples {{chave}}\ntexto = texto.replace(/{{\\s*(\\w+)\\s*}}/g, (_, k) => (variaveis[k] ?? ''));\nreturn [{ json: { ...$json, mensagem: texto } }];"
+      },
+      "id": "Code_Render",
+      "name": "Code - Renderizar Template",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [ 180, -40 ]
+    },
+    {
+      "parameters": {
+        "url": "={{$env.ZAP_BASE_URL}}/v1/messages",
+        "options": {
+          "allowUnauthorizedCerts": false,
+          "redirect": {
+            "maxRedirects": 3
+          },
+          "timeout": 9000
+        },
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpBasicAuth",
+        "sendHeaders": true,
+        "headerParametersUi": {
+          "parameter": [
+            { "name": "Authorization", "value": "Bearer {{$env.ZAP_TOKEN}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "jsonParameters": true,
+        "optionsJson": {},
+        "queryParametersJson": "{}",
+        "bodyParametersJson": "={\n  \"to\": $json.telefone,\n  \"type\": \"text\",\n  \"text\": { \"body\": $json.mensagem }\n}"
+      },
+      "id": "HTTP_Zap",
+      "name": "HTTP Request - Zap (Enviar)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [ 420, -40 ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "table": "envios_log",
+        "columns": "telefone,modelo,payload,resposta,status",
+        "values": "={{ [$json.telefone, ($json.modelo || $env.DEFAULT_TEMPLATE || 'confirmacao_agendamento'), $json, $json.response || {}, 'enviado'] }}"
+      },
+      "id": "Supabase_Log_Sucesso",
+      "name": "Supabase - Log Sucesso",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [ 680, -80 ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "SUPABASE_CREDENTIAL_ID",
+          "name": "Supabase (REST)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "const res = $json;\nreturn [{ json: { ...$json, response: res } }];"
+      },
+      "id": "Code_Pass_Response",
+      "name": "Code - Anexar Resposta",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [ 560, -140 ]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "table": "envios_log",
+        "columns": "telefone,modelo,payload,resposta,status",
+        "values": "={{ [$json.telefone || '', ($json.modelo || $env.DEFAULT_TEMPLATE || 'confirmacao_agendamento'), $json, $json.error || {}, 'erro'] }}"
+      },
+      "id": "Supabase_Log_Erro",
+      "name": "Supabase - Log Erro",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [ 680, 120 ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "SUPABASE_CREDENTIAL_ID",
+          "name": "Supabase (REST)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "if (items[0].json.statusCode && items[0].json.statusCode >= 200 && items[0].json.statusCode < 300) {\n  return items;\n}\nthrow new Error('Envio falhou: ' + (items[0].json.body || items[0].json.statusCode));"
+      },
+      "id": "Code_Verify_HTTP",
+      "name": "Code - Verificar HTTP",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [ 560, -40 ]
+    }
+  ],
+  "connections": {
+    "Webhook (entrada)": {
+      "main": [
+        [ { "node": "Supabase - Buscar Modelo", "type": "main", "index": 0 } ]
+      ]
+    },
+    "Supabase - Buscar Modelo": {
+      "main": [
+        [ { "node": "Code - Renderizar Template", "type": "main", "index": 0 } ]
+      ]
+    },
+    "Code - Renderizar Template": {
+      "main": [
+        [ { "node": "HTTP Request - Zap (Enviar)", "type": "main", "index": 0 } ]
+      ]
+    },
+    "HTTP Request - Zap (Enviar)": {
+      "main": [
+        [ { "node": "Code - Verificar HTTP", "type": "main", "index": 0 } ]
+      ]
+    },
+    "Code - Verificar HTTP": {
+      "main": [
+        [ { "node": "Code - Anexar Resposta", "type": "main", "index": 0 } ]
+      ]
+    },
+    "Code - Anexar Resposta": {
+      "main": [
+        [ { "node": "Supabase - Log Sucesso", "type": "main", "index": 0 } ]
+      ]
+    }
+  },
+  "pinData": {},
+  "active": false,
+  "settings": {
+    "timezone": "America/Campo_Grande",
+    "saveExecutionProgress": "afterEachNode"
+  }
+}
