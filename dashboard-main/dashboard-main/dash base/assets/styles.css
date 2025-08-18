@@ -1,0 +1,34 @@
+/* ========== Main Configs ============ */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    height: 100vh;
+    background-color: #000000 !important; /* Fundo preto */
+    background-size: 300% 300%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+::-webkit-scrollbar {
+    display: none; /* Remove scrollbar no Chrome, Safari e Opera */
+}
+
+/* ============ Dropdown personalizado =========== */
+div.Select-control {
+    background-color: rgba(0, 0, 0, 0.2); /* fundo do dropdown */
+    border-radius: 2px;
+    border: 0.5px solid #1b1e20;
+    font-size: 80%;
+}
+
+.VirtualizedSelectOption {
+    background-color: rgba(0, 0, 0, 0.3); /* fundo das opções */
+    color: white !important;
+}
+
+.Select-value-label {
+    color: white !important; /* cor do texto selecionado */
+}

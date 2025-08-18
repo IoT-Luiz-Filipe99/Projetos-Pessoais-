@@ -1,0 +1,30 @@
+.card-status {
+    background-color: #1e1e2f;  /* Cor de fundo do card (cinza escuro) */
+    padding: 20px;              /* Espaçamento interno do conteúdo */
+    border-radius: 12px;        /* Cantos arredondados */
+    text-align: center;         /* Centraliza o conteúdo dentro do card */
+    color: white;               /* Cor padrão do texto dentro do card */
+    margin: 5px;                /* Espaçamento externo entre os cards */
+    box-shadow: 0px 4px 8px rgba(0,0,0,0.3);  /* Sombra externa para dar efeito de profundidade */
+    transition: transform 0.2s ease;  /* Animação suave quando o card é "hoverado" */
+}
+
+.card-status:hover {
+    transform: scale(1.03);  /* Aumenta levemente o tamanho do card ao passar o mouse */
+}
+
+.card-status .dot {
+    font-size: 80px;         /* Tamanho da bolinha colorida */
+    margin-bottom: 13px;      /* Espaçamento abaixo da bolinha */
+}
+
+.card-status .value {
+    font-size: 50px;         /* Tamanho do número no centro do card */
+    font-weight: bold;       /* Deixa o número em negrito */
+    margin-bottom: 4px;      /* Espaço abaixo do número */
+}
+
+.card-status .label {
+    font-size: 32px;         /* Tamanho do texto do status (ex: “Pendente”) */
+    color: #d0d0d0;          /* Cor clara para o rótulo do status */
+}

@@ -1,0 +1,242 @@
+
+/* ---------------------------------------------------
+💡 VARIÁVEIS DE TEMA
+--------------------------------------------------- */
+:root { 
+  --bg-color: #F4F7FA; 
+  --text-color: #1A1A1A; 
+  --card-bg: #FFFFFF; 
+  --button-text-hover: #FFFFFF; 
+  --card-text: #0077B6; 
+  --accent-primary: #00B4D8;
+  --accent-light: #CAF0F8; 
+  --bg-image: none;
+
+  --card-shadow: rgba(0, 0, 0, 0.05);
+  --card-hover-shadow: rgba(0, 0, 0, 0.1); 
+  --sidebar-bg: #E9EEF2; 
+  --sidebar-text: #222222; 
+
+  --font-family: 'Segoe UI', sans-serif;
+  --font-size-base: 16px;
+  --font-size-title: 20px;
+  --font-size-card: 17px;
+} 
+
+/* ---------------------------------------------------
+🌍 LAYOUT GERAL
+--------------------------------------------------- */
+body, .stApp {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  background-color: var(--bg-color) !important;  /* Corrigindo o fundo */
+  color: var(--text-color);
+  margin: 0 !important;  /* Garantir que não haja margens */
+  padding: 0 !important; /* Garantir que o padding seja zero */
+  background-size: 350px;
+  background-repeat: no-repeat;
+  background-position: right bottom;
+  background-attachment: fixed;
+}
+
+.block-container {
+  padding-top: 2rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+/* ---------------------------------------------------
+🧱 CARDS DE MÉTRICAS
+--------------------------------------------------- */
+.metric-card {
+  background-color: var(--card-bg);
+  color: var(--card-text);
+  border-radius: 16px;
+  padding: 20px;
+  margin: 10px 0;
+  box-shadow: 0px 0px 6px var(--card-shadow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  font-size: var(--font-size-card);
+}
+
+.metric-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 18px var(--card-hover-shadow);
+}
+
+/* ---------------------------------------------------
+🔠 TÍTULOS E TEXTOS
+--------------------------------------------------- */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+h1 {
+  font-size: calc(var(--font-size-title) + 8px);
+}
+h2 {
+  font-size: calc(var(--font-size-title) + 4px);
+}
+h3 {
+  font-size: var(--font-size-title);
+}
+
+/* ---------------------------------------------------
+📦 SIDEBAR REESTILIZADA
+--------------------------------------------------- */
+[data-testid="stSidebar"] {
+  background-color: var(--sidebar-bg) !important;
+  color: var(--sidebar-text) !important;
+  padding: 1.5rem;
+  font-size: var(--font-size-base) !important;
+  border-right: 1px solid var(--accent-light) !important;
+  box-shadow: 2px 0 6px var(--card-shadow) !important;
+}
+
+[data-testid="stSidebar"] h1,
+[data-testid="stSidebar"] h2,
+[data-testid="stSidebar"] h3,
+[data-testid="stSidebar"] label,
+[data-testid="stSidebar"] span,
+[data-testid="stSidebar"] p {
+  color: var(--sidebar-text) !important;
+  font-weight: 500;
+}
+
+/* ---------------------------------------------------
+🖱️ ROLAGEM PERSONALIZADA
+--------------------------------------------------- */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* ---------------------------------------------------
+🧼 CORREÇÃO DE BORDA BRANCA SUPERIOR
+--------------------------------------------------- */
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  background-color: var(--bg-color) !important;  /* Garantir que o fundo está correto */
+  height: 100% !important;
+  width: 100% !important;
+  overflow-x: hidden !important;
+  border: none !important;
+}
+
+.stApp {
+  margin: 0 !important;
+  padding: 0 !important;
+  background-color: var(--bg-color) !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+header, footer {
+  background: var(--bg-color) !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* ---------------------------------------------------
+🛠️ MULTISELECT: EXIBIR TEXTO COMPLETO
+--------------------------------------------------- */
+.css-1n76uvr, .css-1cpxqw2 {
+  max-width: 100% !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+}
+
+/* Estilo das tags de seleção */
+.stMultiSelect div[data-baseweb="tag"] {
+  max-width: none !important;
+  background-color: #ff5e5e !important;
+  border-radius: 8px;
+  padding: 2px 10px;
+  margin: 2px;
+  font-weight: 600;
+  color: var(--card-hover-shadow);
+}
+
+/* Botão de remover (X) */
+.stMultiSelect div[data-baseweb="tag"] button {
+  margin-left: 6px;
+  margin-right: 2px;
+  transform: scale(1.1);
+}
+
+/* ---------------------------------------------------
+📏 AUMENTA ALTURA DO MULTISELECT
+--------------------------------------------------- */
+.stMultiSelect {
+  max-height: 300px !important; /* Ajuste conforme o espaço desejado */
+  overflow-y: auto !important;
+  padding-bottom: 10px;
+}
+
+/* Permite múltiplas linhas de itens selecionados */
+.stMultiSelect div[data-baseweb="tag-list"] {
+  flex-wrap: wrap !important;
+  max-height: 100% !important;
+}
+
+/* Aumenta largura da caixa de seleção (horizontal) */
+[data-testid="stSidebar"] .stMultiSelect {
+  width: 100% !important;         /* ocupa toda a largura disponível */
+  max-width: 100% !important;     /* impede que trunque à direita */
+  min-width: 205px !important;    /* define uma largura mínima boa */
+  overflow-x: visible !important; /* deixa texto transbordar se necessário */
+  margin-left: -25px !important;
+}
+
+/* Permite o texto interno ocupar o espaço total */
+.stMultiSelect div[data-baseweb="select"] {
+  white-space: nowrap !important;
+  overflow-x: auto !important;
+  text-overflow: ellipsis !important;
+  padding-right: 10px;
+}
+
+/* ---------------------------------------------------
+📅 DISTANCIAMENTO DOS CAMPOS NO SIDEBAR
+--------------------------------------------------- */
+
+/* Distanciamento do campo de data (stDateInput) */
+[data-testid="stSidebar"] .stDateInput {
+  margin-top: 5px !important;  /* Adiciona um espaço entre o campo de data e o anterior */
+}
+
+/* Distanciamento do campo de multiselect (stMultiSelect) */
+[data-testid="stSidebar"] .stMultiSelect {
+  margin-top: 20px !important;  /* Adiciona um espaço entre o multiselect e o anterior */
+}
+
+/* Distanciamento do botão (stButton) */
+[data-testid="stSidebar"] .stButton {
+  margin-top: 25px !important;  /* Adiciona um espaço entre o botão e o anterior */
+}
+
+/* Ajustando o espaçamento do título da sidebar */
+[data-testid="stSidebar"] h1 {
+  margin-top: 10px !important;
+}
+
+/* Ajustando o espaçamento do input */
+[data-testid="stSidebar"] input {
+  margin-top: 10px !important;
+}
+
+/* Caso tenha outros campos, aplique também um margin-top personalizado para cada um deles */
+
+
+
+
+
