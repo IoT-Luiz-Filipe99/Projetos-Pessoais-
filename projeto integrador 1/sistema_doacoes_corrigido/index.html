@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema de Doações Comunitárias</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Sistema de Doações Comunitárias</h1>
+        <form id="form-doacao">
+            <input type="text" id="nome" placeholder="Nome do doador" required>
+            <input type="text" id="contato" placeholder="Contato (telefone ou e-mail)" required>
+            <select id="tipo-doacao" required>
+                <option value="">Tipo de doação</option>
+                <option value="Alimento">Alimento</option>
+                <option value="Roupa">Roupa</option>
+                <option value="Higiene">Higiene</option>
+            </select>
+            <input type="number" id="quantidade" placeholder="Quantidade" min="1" required>
+            <input type="date" id="data" required>
+            <button type="submit">Cadastrar Doação</button>
+        </form>
+
+        <h2>Lista de Doações</h2>
+        <table id="tabela-doacoes">
+            <thead>
+                <tr>
+                    <th>Tipo</th>
+                    <th>Quantidade</th>
+                    <th>Data</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <h2>Gráfico: Total por Tipo</h2>
+        <canvas id="graficoDoacoes" width="400" height="200"></canvas>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
